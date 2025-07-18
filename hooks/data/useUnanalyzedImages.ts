@@ -8,10 +8,10 @@ import { GET } from "@/lib/api/api-client"
 
 interface QueryParams {}
 
-export const useUnanalyzedImagesList = (params: QueryParams) => {
+export const useUnanalyzedImagesList = (params: QueryParams = {}) => {
   const BASE = "5f2f729312b1481b9b1b4eb9d00bc455"
   const ENDPOINT = "unanalyzed-images"
-  const url = `https://${BASE}/${process.env.NEXT_PUBLIC_API_URL}/${ENDPOINT}`
+  const url = `https://${BASE}.${process.env.NEXT_PUBLIC_API_URL}/${ENDPOINT}`
 
   useEffect(() => {}, [])
 
