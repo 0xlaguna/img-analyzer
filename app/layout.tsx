@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 
+import { RQProvider } from "@/config/react-query"
 import { geistMono, geistSans } from "@/lib/fonts"
 import { ThemeProvider } from "@/components/theme-provider"
 
@@ -29,7 +30,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <ModeToggle />
-          {children}
+          <RQProvider>{children}</RQProvider>
         </ThemeProvider>
       </body>
     </html>
