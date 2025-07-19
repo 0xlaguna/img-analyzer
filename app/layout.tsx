@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 
 import { RQProvider } from "@/config/react-query"
 import { geistMono, geistSans } from "@/lib/fonts"
+import { Toaster } from "@/components/ui/sonner"
 import { ThemeProvider } from "@/components/theme-provider"
 
 import "./globals.css"
@@ -31,6 +32,7 @@ export default function RootLayout({
         >
           <ModeToggle />
           <RQProvider>{children}</RQProvider>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

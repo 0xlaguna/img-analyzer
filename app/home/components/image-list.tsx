@@ -11,9 +11,7 @@ interface ImageListProps {
   images: UnanalyzedImage[] | undefined
 }
 export default function ImageList(props: ImageListProps) {
-  const { selectedImageId, setSelectedImage } = useAnalyzerStore(
-    (state) => state
-  )
+  const { selectedImage, setSelectedImage } = useAnalyzerStore((state) => state)
 
   return (
     <div className="p-4">
@@ -24,11 +22,11 @@ export default function ImageList(props: ImageListProps) {
             <Card
               className={cn(
                 "flex min-h-[100px] cursor-pointer flex-col justify-center transition-all duration-200 hover:shadow-md",
-                selectedImageId === img.id
+                selectedImage?.id === img.id
                   ? "ring-primary bg-primary/5 ring-2"
                   : "hover:bg-muted/50"
               )}
-              onClick={() => setSelectedImage(img.id)}
+              onClick={() => setSelectedImage(img)}
             >
               <CardContent>
                 <Image src={img.url} width={100} height={100} alt="thumbnail" />

@@ -1,18 +1,41 @@
 "use client"
 
 import { useAnalyzerStore } from "@/providers/analyzer-provider"
+import { toast } from "sonner"
 
 import { cn } from "@/lib/utils"
 import { useImageCategoriesList } from "@/hooks/data/useImageCategories"
+import { usePostAnnnotation } from "@/hooks/data/usePostAnnotation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 
 export default function ImageOptions() {
-  const { imageCategoryId, setImageCategory } = useAnalyzerStore(
-    (state) => state
-  )
+  const { imageCategoryId, setImageCategory, selectedImage, boundingBox, set } =
+    useAnalyzerStore((state) => state)
   const { imageCategoriesListData } = useImageCategoriesList()
+
+  const { createAnnotation } = usePostAnnnotation()
+
+  const onPostAnnotate = () => {
+    createAnnotation({
+      imageId: selectedImage?.id,
+      annotations: [
+        {
+          categoryId: imageCategoryId,
+          boundingBoxes: [
+            {
+              topLeftX: boundingBox?.topLeftX,
+              topLeftY: boundingBox?.topLeftX,
+              width: boundingBox?.width,
+              height: boundingBox?.height,
+            },
+          ],
+        },
+      ],
+    })
+    toast("Annotation created!")
+  }
 
   return (
     <div className="flex w-[300px] flex-col p-4">
@@ -37,7 +60,7 @@ export default function ImageOptions() {
       </div>
       <div className="mt-4 flex justify-between">
         <Button>Discard</Button>
-        <Button>Confirm</Button>
+        <Button onClick={onPostAnnotate}>Confirm</Button>
       </div>
     </div>
   )

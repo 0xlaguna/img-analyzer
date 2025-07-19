@@ -3,10 +3,12 @@
 import React, { useEffect, useRef, useState } from "react"
 import { useAnalyzerStore } from "@/providers/analyzer-provider"
 import Konva from "konva"
-import { Layer, Rect, Stage, Transformer } from "react-konva"
+import { Image, Layer, Rect, Stage, Transformer } from "react-konva"
+import useImage from "use-image"
 
 export default function Renderer() {
-  const { rendererConfig } = useAnalyzerStore((state) => state)
+  const { rendererConfig, selectedImage } = useAnalyzerStore((state) => state)
+
   const getCorner = (
     pivotX: number,
     pivotY: number,
@@ -73,44 +75,88 @@ export default function Renderer() {
   const LimitedDragAndResize = () => {
     const [stageSize, setStageSize] = useState({
       width: rendererConfig.width * 12,
-      height: rendererConfig.height * 2,
+      height: rendererConfig.height * 6,
     })
+
+    const [scale, setScale] = useState(1)
 
     const [shapes, setShapes] = useState([
       {
         id: "rect1",
-        x: (rendererConfig.width * 12) / 2 - 60,
-        y: (rendererConfig.height * 2) / 2 - 60,
+        x: stageSize.width / 2 - 60,
+        y: stageSize.height / 2 - 60,
         width: 50,
         height: 50,
-        fill: "red",
-      },
-      {
-        id: "rect2",
-        x: (rendererConfig.width * 12) / 2 + 10,
-        y: (rendererConfig.height * 2) / 2 + 10,
-        width: 50,
-        height: 50,
-        fill: "green",
+        fill: "#FF000080",
       },
     ])
 
+    const [boundingBox, setBoundingBox] = useState({
+      topLeftX: 0,
+      topLeftY: 0,
+      width: 0,
+      height: 0,
+    })
+
     const shapeRefs = useRef(new Map())
     const trRef = useRef<any>(null)
+
+    const [image, status] = useImage(selectedImage?.url!)
+
+    const updateBoundingBox = () => {
+      if (!trRef.current) return
+
+      const nodes = trRef.current.nodes()
+      if (nodes.length === 0) return
+
+      const boxes = nodes.map((node: { getClientRect: () => any }) =>
+        node.getClientRect()
+      )
+      const box = getTotalBox(boxes)
+
+      const newBoundingBox = {
+        topLeftX: box.x,
+        topLeftY: box.y,
+        width: box.width,
+        height: box.height,
+      }
+
+      setBoundingBox(newBoundingBox)
+      console.log("Bounding Box Updated:", newBoundingBox)
+    }
+
+    useEffect(() => {
+      if (!image) {
+        return
+      }
+
+      const scale = Math.min(
+        stageSize.width / image.width,
+        stageSize.height / image.height
+      )
+      setScale(scale)
+
+      const ratio = image.width / image.height
+      setStageSize({
+        width: stageSize.width,
+        height: stageSize.height / ratio,
+      })
+    }, [image, scale])
 
     // Setup a transfomer after layout mounts so we can rotate, resize and scale
     useEffect(() => {
       if (trRef.current) {
         const nodes = shapes.map((shape) => shapeRefs.current.get(shape.id))
         trRef.current.nodes(nodes)
+        updateBoundingBox()
       }
     }, [shapes])
 
     useEffect(() => {
       const handleResize = () => {
         setStageSize({
-          width: rendererConfig.width * 12,
-          height: rendererConfig.height * 2,
+          width: stageSize.width,
+          height: stageSize.height,
         })
       }
 
@@ -183,11 +229,18 @@ export default function Renderer() {
           shape.setAbsolutePosition(newAbsPos)
         }
       )
+      updateBoundingBox()
     }
 
     return (
-      <Stage width={stageSize.width} height={stageSize.height}>
+      <Stage
+        width={stageSize.width}
+        height={stageSize.height}
+        scaleX={scale}
+        scaleY={scale}
+      >
         <Layer>
+          <Image image={image} />
           {shapes.map((shape) => (
             <Rect
               key={shape.id}
@@ -206,6 +259,7 @@ export default function Renderer() {
             ref={trRef}
             boundBoxFunc={boundBoxFunc}
             onDragMove={handleTransformerDrag}
+            onTransformEnd={updateBoundingBox}
           />
         </Layer>
       </Stage>
