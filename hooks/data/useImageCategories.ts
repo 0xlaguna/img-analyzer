@@ -8,10 +8,10 @@ import { GET } from "@/lib/api/api-client"
 
 interface QueryParams {}
 
-export const useImageCategoriesList = (params: QueryParams) => {
+export const useImageCategoriesList = (params: QueryParams = {}) => {
   const BASE = "f6fe9241e02b404689f62c585d0bd967"
   const ENDPOINT = "categories"
-  const url = `https://${BASE}/${process.env.NEXT_PUBLIC_API_URL}/${ENDPOINT}`
+  const url = `https://${BASE}.${process.env.NEXT_PUBLIC_API_URL}/${ENDPOINT}`
 
   useEffect(() => {}, [])
 
