@@ -9,7 +9,7 @@ pnpm install
 pnpm dev
 ```
 
-## Make sure to add an env.local file with
+## Make sure to add an .env.local file with
 
 ```bash
 NEXT_PUBLIC_API_URL="api.mockbin.io"
