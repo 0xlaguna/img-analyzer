@@ -9,6 +9,7 @@ export type RendererConfig = {
 
 export type AnalyzerState = {
   imageCategoryId?: number
+  selectedImageId?: number
   searchTerm?: string
   images?: UnanalyzedImage[]
   rendererConfig: RendererConfig
@@ -16,6 +17,7 @@ export type AnalyzerState = {
 
 export type AnalyzerActions = {
   setImageCategory: (id: number) => void
+  setSelectedImage: (id: number) => void
   setSearchTerm: (search: string) => void
 }
 
@@ -24,6 +26,7 @@ export type AnalyzerStore = AnalyzerState & AnalyzerActions
 export const defaultState: AnalyzerState = {
   imageCategoryId: undefined,
   searchTerm: undefined,
+  selectedImageId: undefined,
   images: undefined,
   rendererConfig: {
     width: 100,
@@ -45,5 +48,7 @@ export const createAnalyzerStore = (
     setImageCategory: (id) =>
       set((state) => ({ ...state, imageCategoryId: id })),
     setSearchTerm: (term) => set((state) => ({ ...state, searchTerm: term })),
+    setSelectedImage: (id) =>
+      set((state) => ({ ...state, selectedImageId: id })),
   }))
 }
