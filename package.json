@@ -15,6 +15,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@tanstack/react-query": "5.83.0",
     "axios": "1.10.0",
+    "canvas": "^3.1.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "konva": "^9.3.22",
@@ -24,7 +25,9 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-konva": "^19.0.7",
+    "sonner": "^2.0.6",
     "tailwind-merge": "^3.3.1",
+    "use-image": "^1.1.4",
     "zustand": "5.0.6"
   },
   "devDependencies": {

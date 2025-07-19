@@ -1,40 +1,36 @@
 "use client"
 
-import { useUnanalyzedImagesList } from "@/hooks/data/useUnanalyzedImages"
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import dynamic from "next/dynamic"
+import { AnalyzerStoreProvider } from "@/providers/analyzer-provider"
+import { defaultState, type AnalyzerState } from "@/stores/analyzer-store"
 
-import UnalayzedImages from "./components/unanalyzed-images"
+import { useUnanalyzedImagesList } from "@/hooks/data/useUnanalyzedImages"
+
+import ImageList from "./components/image-list"
+import ImageOptions from "./components/image-options"
+
+const Renderer = dynamic(() => import("./components/renderer"), {
+  ssr: false,
+})
 
 export default function Page() {
   const { unalyzedImgsListData } = useUnanalyzedImagesList()
 
-  console.log(unalyzedImgsListData)
+  const state: AnalyzerState = { ...defaultState, images: unalyzedImgsListData }
 
   return (
-    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-      <div className="h-full w-7xl">
-        <Card className="h-[80vh] w-7xl">
-          <CardHeader>
-            <CardTitle>Card Title</CardTitle>
-            <CardDescription>Card Description</CardDescription>
-            <CardAction></CardAction>
-          </CardHeader>
-          <CardContent>
-            <p>Card Content</p>
-          </CardContent>
-          <CardFooter className="items-center justify-center">
-            <UnalayzedImages images={unalyzedImgsListData} />
-          </CardFooter>
-        </Card>
+    <AnalyzerStoreProvider state={state}>
+      <div className="flex min-h-[90vh] flex-col p-4">
+        <div className="flex flex-1">
+          <div className="border-4 border-solid">
+            <Renderer />
+          </div>
+          <div className="flex-1">
+            <ImageOptions />
+          </div>
+        </div>
+        <ImageList images={unalyzedImgsListData} />
       </div>
-    </div>
+    </AnalyzerStoreProvider>
   )
 }
